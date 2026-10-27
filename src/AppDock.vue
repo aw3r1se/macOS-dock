@@ -180,23 +180,22 @@ defineExpose({ iconCenter, thumbRect })
       <component :is="app.icon" class="icon" aria-hidden="true" />
       <span class="indicator" :class="{ on: app.running }" />
     </button>
-    <template v-if="windows.length">
-      <span class="divider" @contextmenu.prevent.stop="openMenu(DOCK, $event.currentTarget, $event)" />
-      <button
-        v-for="win in windows"
-        :key="win.id"
-        :ref="setEl(windowEls, win.id)"
-        type="button"
-        class="dock-item window-tile"
-        :aria-label="`${windowLabel(win)} window`"
-        @click="restore(win)"
-      >
-        <span class="tooltip">{{ windowLabel(win) }}</span>
-        <DockThumb class="thumb" :thumb="win.thumb" :size="size" />
-        <!-- the app's icon badges its minimized windows -->
-        <component :is="appById.get(win.app)?.icon" v-if="win.thumb" class="badge" aria-hidden="true" />
-      </button>
-    </template>
+    <!-- always there, as on macOS: its menu holds the Dock's own settings -->
+    <span class="divider" @contextmenu.prevent.stop="openMenu(DOCK, $event.currentTarget, $event)" />
+    <button
+      v-for="win in windows"
+      :key="win.id"
+      :ref="setEl(windowEls, win.id)"
+      type="button"
+      class="dock-item window-tile"
+      :aria-label="`${windowLabel(win)} window`"
+      @click="restore(win)"
+    >
+      <span class="tooltip">{{ windowLabel(win) }}</span>
+      <DockThumb class="thumb" :thumb="win.thumb" :size="size" />
+      <!-- the app's icon badges its minimized windows -->
+      <component :is="appById.get(win.app)?.icon" v-if="win.thumb" class="badge" aria-hidden="true" />
+    </button>
   </nav>
   <DockMenu
     v-if="menu"

@@ -1,6 +1,6 @@
 {
   "name": "@aw3r1se/macos-dock",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "macOS-like Dock vue-component: auto-hide, minimized window tiles, right-click menus",
   "type": "module",
   "main": "./src/index.js",
