@@ -14,27 +14,24 @@ const props = defineProps({
   windows: { type: Array, default: () => [] },
   // Keep the dock on screen (e.g. when no window is open)
   pinned: { type: Boolean, default: false },
-  // Hide the dock until the pointer reaches the bottom edge (v-model:autohide;
-  // toggled from the divider's menu, like macOS)
-  autohide: { type: Boolean, default: true },
+  // Hide the dock until the pointer reaches the bottom edge
+  autohide: { type: Boolean, default: false },
   // Tile size, px
   size: { type: Number, default: 56 },
 })
 
-const emit = defineEmits(['activate', 'restore', 'update:autohide'])
+const emit = defineEmits(['activate', 'restore'])
 
 const BOUNCE_MS = 600
 // Click-and-hold on an icon opens its menu, like macOS
 const HOLD_MS = 700
-// Owner of the dock's own menu (the divider's)
-const DOCK = Symbol('dock')
 
 const dockEl = ref()
 const appEls = new Map()
 const windowEls = new Map()
 const hovering = ref(false)
 const bouncing = reactive(new Set())
-// { id, owner: app id | DOCK, anchor, altKey } while a menu is open
+// { id, owner: app id, anchor, altKey } while a menu is open
 const menu = ref(null)
 let menuSeq = 0
 let holdTimer
@@ -53,19 +50,12 @@ const windowLabel = (win) => win.label ?? appById.value.get(win.app)?.label
 
 const setEl = (map, id) => (el) => (el ? map.set(id, el) : map.delete(id))
 
-const dockMenu = computed(() => [
-  { label: props.autohide ? 'Turn Hiding Off' : 'Turn Hiding On', action: () => emit('update:autohide', !props.autohide) },
-])
-
 // Items stay live while the menu is open (e.g. an app quits meanwhile)
-const menuItems = computed(() => {
-  const owner = menu.value?.owner
-  return owner === DOCK ? dockMenu.value : (appById.value.get(owner)?.menu ?? [])
-})
+const menuItems = computed(() => appById.value.get(menu.value?.owner)?.menu ?? [])
 
 function openMenu(owner, el, e) {
   clearTimeout(holdTimer)
-  const items = owner === DOCK ? dockMenu.value : appById.value.get(owner)?.menu
+  const items = appById.value.get(owner)?.menu
   if (!items?.length) return
   const rect = el.getBoundingClientRect()
   const shift = hiddenShift()
@@ -180,8 +170,7 @@ defineExpose({ iconCenter, thumbRect })
       <component :is="app.icon" class="icon" aria-hidden="true" />
       <span class="indicator" :class="{ on: app.running }" />
     </button>
-    <!-- always there, as on macOS: its menu holds the Dock's own settings -->
-    <span class="divider" @contextmenu.prevent.stop="openMenu(DOCK, $event.currentTarget, $event)" />
+    <span v-if="windows.length" class="divider" />
     <button
       v-for="win in windows"
       :key="win.id"
@@ -276,7 +265,7 @@ defineExpose({ iconCenter, thumbRect })
   85% { transform: translateY(-5px); }
 }
 
-/* 1px line in a wider strip, so it's easy to right-click */
+/* 1px line between the apps and the minimized windows */
 .divider {
   align-self: stretch;
   width: 7px;

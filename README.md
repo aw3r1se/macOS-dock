@@ -1,6 +1,6 @@
 # macos-dock
 
-A macOS-like Dock for Vue 3: auto-hiding bar with app icons, launch bounce,
+A macOS-like Dock for Vue 3: a bar with app icons (optionally auto-hiding), launch bounce,
 running indicators, minimized window tiles and right-click menus that behave
 like the real ones.
 
@@ -22,7 +22,6 @@ The package ships Vue SFC sources, so it needs a bundler with Vue support
   import TerminalIcon from './TerminalIcon.vue';
 
   const running = ref(false);
-  const autohide = ref(true);
 
   const apps = computed(() => [{
     id: 'terminal',
@@ -37,7 +36,6 @@ The package ships Vue SFC sources, so it needs a bundler with Vue support
 
 <template>
   <AppDock
-    v-model:autohide="autohide"
     :apps="apps"
     :pinned="!running"
     @activate="(id) => (running = true)"
@@ -51,10 +49,10 @@ The package ships Vue SFC sources, so it needs a bundler with Vue support
 
 | Prop | Type | Default | |
 |---|---|---|---|
-| `apps` | `App[]` | — | Icons left of the divider |
-| `windows` | `DockWindow[]` | `[]` | Minimized window tiles, right of the divider |
+| `apps` | `App[]` | — | App icons |
+| `windows` | `DockWindow[]` | `[]` | Minimized window tiles, after a divider (shown only with tiles) |
 | `pinned` | `boolean` | `false` | Keep the Dock on screen (e.g. no window is open) |
-| `autohide` | `boolean` | `true` | Hide until the pointer reaches the bottom edge. `v-model:autohide`, toggled from the divider's menu |
+| `autohide` | `boolean` | `false` | Hide until the pointer reaches the bottom edge |
 | `size` | `number` | `56` | Tile size, px |
 
 ```ts
@@ -95,7 +93,6 @@ type MenuItem =
 |---|---|---|
 | `activate` | app `id` | App icon clicked |
 | `restore` | window `id` | Window tile clicked |
-| `update:autohide` | `boolean` | Hiding toggled from the divider's menu |
 
 Exposed methods (via a template ref), for minimize/restore animations:
 
@@ -109,7 +106,7 @@ While open: the Dock stays shown, tooltips hide, the icon dims; Option swaps in
 `alt` items; ↑/↓, Enter/Space and Esc work and keys don't reach the page; press,
 drag to an item and release selects it; the chosen item blinks before the menu
 closes. A press outside closes the menu (a press on a Dock icon doesn't also
-activate it). The divider's menu toggles hiding.
+activate it).
 
 ### Styling
 
