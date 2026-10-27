@@ -1,0 +1,35 @@
+{
+  "name": "@aw3r1se/macos-dock",
+  "version": "0.1.0",
+  "description": "macOS-like Dock vue-component: auto-hide, minimized window tiles, right-click menus",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": ["src"],
+  "sideEffects": ["*.vue"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aw3r1se/macOS-dock.git"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "macos",
+    "dock",
+    "context-menu"
+  ],
+  "author": {
+    "name": "Bogdan Koch",
+    "email": "aw3r1se@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aw3r1se/macOS-dock/issues"
+  }
+}
